@@ -38,15 +38,27 @@ while True:
     for face_encoding, face_location in zip(unknown_encodings, face_locations):
         result = fr.compare_faces(face_encodings, face_encoding, 0.4)
 
-        if True in result:
+        if any(result):
             name = face_names[result.index(True)]
 
             top, right, bottom, left = face_location
 
-            cv2.rectangle(image, (left*scl, top*scl), (right*scl, bottom*scl), (0, 0, 255), 2)
+            cv2.rectangle(image, (left*scl, top*scl), (right*scl, bottom*scl), (0, 255, 0), 2)
 
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(image, name, (left*scl, bottom*scl + 20), font, 0.8, (255, 255, 255), 1)
+            cv2.putText(image, name, (left*scl, bottom*scl + 30), font, 1, (0, 255, 0),2)
+        else:
+            top, right, bottom, left = face_location
+
+            cv2.rectangle(image, (left * scl, top * scl), (right * scl, bottom * scl), (0, 0, 255), 2)
+
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(image, "unknown", (left * scl, bottom * scl + 30), font, 1, (0, 0, 255), 2)
 
     cv2.imshow("frame", image)
-    cv2.waitKey(1)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+video.release()
+cv2.destroyAllWindows()
